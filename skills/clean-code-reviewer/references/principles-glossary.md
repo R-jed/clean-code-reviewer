@@ -18,7 +18,7 @@ Quick reference for commonly used software engineering principles and their rule
 |---------|-----------|-----------|---------------|
 | **YAGNI** | You Aren't Gonna Need It | Don't build what you don't need yet | PP-43 |
 | **KISS** | Keep It Simple, Stupid | Simplest solution that works | CC-130, PP-72 |
-| **DRY** | Don't Repeat Yourself | Knowledge should have single source | PP-15, CC-37, CC-128, CC-155 |
+| **DRY** | Don't Repeat Yourself | Knowledge should have single source | PP-15, CC-37, CC-127, CC-155 |
 | **WET** | Write Everything Twice | Acceptable duplication before abstraction | See [principles-spectrum.md](principles-spectrum.md) |
 | **AHA** | Avoid Hasty Abstractions | Don't abstract too early | See [principles-spectrum.md](principles-spectrum.md) |
 
@@ -69,7 +69,7 @@ Quick reference for commonly used software engineering principles and their rule
 
 **Important:** DRY is about *knowledge*, not *code text*. Two pieces of code that look the same but represent different business rules should NOT be merged.
 
-**Related:** PP-15, CC-37, CC-128, CC-155
+**Related:** PP-15, CC-37, CC-127, CC-155
 
 ---
 
@@ -353,8 +353,8 @@ I = 1: Maximally unstable (no dependents, many dependencies)
 |-----------|-----------|-------|
 | **Dependency Rule** | Dependencies point inward toward core | CA-31 |
 | **Screaming Architecture** | Architecture should scream its purpose | CA-30 |
-| **Plugin Architecture** | Details as plugins to core | CA-48 |
-| **Humble Object** | Isolate hard-to-test code | CA-32, CA-47 |
+| **Plugin Architecture** | Details as plugins to core | CA-47 |
+| **Humble Object** | Isolate hard-to-test code | CA-32, CA-46 |
 
 ### Dependency Rule
 
@@ -362,7 +362,7 @@ I = 1: Maximally unstable (no dependents, many dependencies)
 
 **Layers (outer to inner):**
 1. Frameworks & Drivers (DB, UI, Web)
-2. Interface Adapters (Controllers, Gateways)
+2. Interface Adapters (Controllers, Gateways, Presenters)
 3. Application Business Rules (Use Cases)
 4. Enterprise Business Rules (Entities)
 
