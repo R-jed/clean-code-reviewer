@@ -9,7 +9,7 @@ Find the right rules quickly by searching for the symptom you observe.
 | **Function too long** | CC-20, CC-21, CC-180 | Extract smaller functions |
 | **Too many parameters** | CC-26, CC-29, CC-147 | Use parameter object |
 | **Deep nesting** | CC-22, CC-178, CC-20 | Extract methods, early return |
-| **Duplicate code** | PP-15, CC-37, CC-128, CC-155 | Extract shared function (after Rule of Three) |
+| **Duplicate code** | PP-15, CC-37, CC-127, CC-155 | Extract shared function (after Rule of Three) |
 | **Magic numbers** | CC-175 | Extract named constant |
 | **Long method chains** | PP-46, CC-80, CC-81, CC-186 | Add delegate methods |
 | **God class** | CC-109, CC-110, CA-8 | Split by responsibility |

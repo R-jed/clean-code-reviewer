@@ -49,7 +49,7 @@ Quick but comprehensive review covering:
 
 ## 📋 Standardized Reporting
 
-Every review produces a consistent, visually clear report with detailed rule explanations:
+Every review produces a consistent, visually clear report with detailed rule explanations. Metric thresholds are investigation signals; a threshold breach is reported only when evidence shows a concrete problem.
 
 ```markdown
 ## 📋 Code Review Report
@@ -70,11 +70,11 @@ Every review produces a consistent, visually clear report with detailed rule exp
     - Data loss/breach risk if exploited
 
 ### 🟡 Important Issues (Should Fix)
-- **[user.ts:120] Function `processData` has 8 parameters**
-  - Evidence: Signature shows 8 required positional parameters at line 120; L3 threshold is ≤5
+- **[user.ts:120] Function `processData` has 8 required positional parameters and unreadable call sites**
+  - Evidence: Callers pass all 8 values positionally, so argument meaning cannot be understood without reopening the signature; L3 threshold is ≤5
   - Rule: CC-26 (Function Arguments)
-  - Principle: Many parameters increase cognitive load. L3 threshold is ≤5.
-  - Suggestion: Group into a parameter object
+  - Principle: The threshold breach is reportable because it creates a concrete readability and change-safety problem
+  - Suggestion: Group related values into a parameter object
   - Effort: Medium
     - Touches callers across 3 files
     - Test updates needed for new signature
@@ -138,11 +138,11 @@ flowchart TD
     B --> C[Q1: Who uses it?]
     C --> D[Q2: What standard?]
     D --> E{Need Q3?}
-    
+
     E -->|D2/D3 + R3/R4| F[Q3: How critical?]
     E -->|Otherwise| G[Determine Level]
     F --> G
-    
+
     G --> H[L1-L5 Strictness]
     H --> I[🔍 Identify Language]
     I --> J[📝 Run 15-Point Checklist]
@@ -155,7 +155,7 @@ flowchart TD
     L2 --> N[📋 Generate Report]
     N --> O{Verdict}
 
-    O -->|Critical| P[🚫 Major Rework]
-    O -->|Important| Q[⚠️ Needs Fixes]
-    O -->|Clean| M
+    O -->|≥3 Critical or fundamental design problem| P[🚫 Major Rework]
+    O -->|Any Critical or >2 Important| Q[⚠️ Needs Fixes]
+    O -->|0 Critical and ≤2 Important| M
 ```

@@ -178,8 +178,8 @@ Q3: How critical? (2 options)
 | Item | Value |
 |------|-------|
 | Total options | 3 + 4 + 2 = 9 |
-| Valid combinations | 20 |
-| Average questions | 2.3 |
+| Valid terminal combinations | 16 |
+| Average questions | 2.3 (assuming Q1/Q2 choices are uniformly distributed) |
 | Output levels | L1-L5 (5 levels) |
 
 ---

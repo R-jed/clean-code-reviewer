@@ -8,17 +8,17 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="MIT License">
-  <img src="https://img.shields.io/badge/rules-350%2B-green.svg" alt="350+ 条规则">
+  <img src="https://img.shields.io/badge/rules-336-green.svg" alt="336 条审查规则">
   <img src="https://img.shields.io/badge/levels-L1%E2%80%93L5-orange.svg" alt="L1–L5 严格度">
 </p>
 
-把《Clean Code》《Clean Architecture》《The Pragmatic Programmer》三本书的 350 多条规则，装进 Claude Code 的代码审查。审查前先问你三个问题，决定这条代码配得上多严格的标准，然后按 15 点清单走查，最后给一份只含结论的报告。
+把《Clean Code》《Clean Architecture》《The Pragmatic Programmer》三本书的 350 个来源规则编号整理成审查体系，其中 14 条 Clean Code 格式规则交给 linter 和 formatter，实际纳入代码审查 336 条。审查前先问你三个问题，决定这条代码配得上多严格的标准，然后按 15 点清单走查，最后给一份只含结论的报告。
 
 不检查格式。那属于 linter 和 formatter 的活。这里只看逻辑、设计与架构。
 
 ## 为什么用它
 
-- **每条结论都能溯源。** 报告里的问题都标注规则编号（CC-## / CA-## / PP-##），对应参考文档里的原文。
+- **每条结论都能溯源。** 报告里的问题都标注规则编号（CC-## / CA-## / PP-##），对应参考文档里的规则条目。
 - **严格度可以调。** 3+4+2 问卷把标准从 L1（实验室脚本）校准到 L5（金融、医疗级）。同一个 skill，审玩具项目不小题大做，审核心依赖不放水。
 - **懂语言差异。** 书里规则大多是 Java 场景。skill 按范式调整：Java/C# 全量适用，TypeScript、Python、Kotlin 做适配，Rust、Go 和函数式语言另有一套。
 - **结论有优先级。** 每个 Critical/Important 问题附带 Effort（改起来多费劲）和 Benefit（改了值多少），团队照此排修复顺序。
@@ -35,7 +35,7 @@ Clean Code Reviewer 的输出是：
 > **L3 Team** · Critical 1 / Important 1 / Minor 1
 >
 > - **[user.ts:45] SQL 查询用字符串拼接构造** — Critical · PP-72 · 注入风险 · Effort Low / Benefit High
-> - **[helpers.ts:120] 函数 8 个参数** — Important · CC-26 · 超出 L3 阈值（≤5）· Effort Medium / Benefit Low
+> - **[helpers.ts:120] 函数 8 个参数** — Important · CC-26 · 超出 L3 阈值（≤5）且调用点难以辨认参数含义 · Effort Medium / Benefit Low
 > - **[helpers.ts:42] 魔法数字 86400 未命名** — Minor · CC-175
 >
 > 裁决：⚠️ Needs fixes
@@ -97,7 +97,7 @@ npx skills update clean-code-reviewer -g
 │   └── clean-code-reviewer/   # skill 本体
 │       ├── SKILL.md           # 主文件：工作流、清单、报告模板
 │       ├── docs/              # 功能说明、度量阈值、定位系统、规则来源
-│       ├── references/        # 三本书规则原文、语言调整、快速查询
+│       ├── references/        # 三本书规则库、语言调整、快速查询
 │       └── scripts/           # 校验脚本
 ├── LICENSE
 └── README.md

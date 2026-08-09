@@ -1,6 +1,6 @@
 # Rule Sources
 
-This skill is based on 350+ rules from three foundational software engineering books.
+This skill catalogs 350 source-numbered rules from three foundational software engineering books. Fourteen Clean Code formatting rules (CC-64 to CC-77) are intentionally excluded from human review, leaving 336 active review rules.
 
 ## 📗 The Pragmatic Programmer (PP-1 to PP-100)
 
@@ -26,6 +26,8 @@ This skill is based on 350+ rules from three foundational software engineering b
 **Author:** Robert C. Martin
 
 > *"Clean code reads like well-written prose."*
+
+CC-64 to CC-77 cover formatting and are intentionally omitted from the active review set. They are delegated to automated linters and formatters.
 
 ### Key Principles
 
@@ -72,10 +74,11 @@ This skill is based on 350+ rules from three foundational software engineering b
 
 ---
 
-## Rule Prefix Reference
+## Rule Inventory
 
-| Prefix | Source | Total Rules |
-|--------|--------|-------------|
-| **PP-##** | The Pragmatic Programmer | 100 |
-| **CC-##** | Clean Code | 202 |
-| **CA-##** | Clean Architecture | 48 |
+| Prefix | Source | Source-numbered | Active review rules |
+|--------|--------|----------------:|--------------------:|
+| **PP-##** | The Pragmatic Programmer | 100 | 100 |
+| **CC-##** | Clean Code | 202 | 188 |
+| **CA-##** | Clean Architecture | 48 | 48 |
+| **Total** | | **350** | **336** |

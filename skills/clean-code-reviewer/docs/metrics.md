@@ -2,7 +2,7 @@
 
 ## Metrics Guidelines
 
-> **These are conversation starters, not hard gates.** A clear 60-line function beats three confusing 20-line functions *(exemption rationale, not default tolerance)*.
+> **These are conversation starters, not hard gates.** A threshold breach alone is not a finding. Report it only when evidence shows a concrete readability, maintainability, correctness, testing, reviewability, or design problem. A clear 60-line function beats three confusing 20-line functions *(exemption rationale, not default tolerance)*.
 
 | Metric | L1 | L2 | L3 | L4 | L5 |
 |--------|-----|-----|-----|-----|-----|
@@ -17,8 +17,8 @@
 
 | Smell | Rule | Detection |
 |-------|------|-----------|
-| Long Function | CC-20 | Exceeds level threshold? (See Metrics Guidelines) |
-| Too Many Params | CC-26 | Exceeds level threshold? (See Metrics Guidelines) |
+| Long Function | CC-20 | Threshold exceeded and causing a concrete readability or design problem? |
+| Too Many Params | CC-26 | Threshold exceeded and making calls, testing, or change harder? |
 | Magic Numbers | CC-175 | Unnamed constants |
 | Feature Envy | CC-164 | Using other class's data |
 | God Class | CA-8 | Multiple responsibilities |
@@ -28,6 +28,7 @@
 
 1. **Count logic lines only** — exclude docstrings, comments, blank lines
 2. **Metrics are conversation starters, not hard gates**
+3. **Require concrete evidence** — a threshold breach alone is not reportable
 
 ### Function Length Exemptions
 
