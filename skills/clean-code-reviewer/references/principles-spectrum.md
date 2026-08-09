@@ -256,5 +256,5 @@ def process_order(order: Order) -> Decimal:
 | PP-43 | Avoid Fortune-Telling (YAGNI) |
 | CA-25 | True duplication vs accidental similarity |
 | CC-37 | Don't Repeat Yourself |
-| CC-128 | No Duplication |
+| CC-127 | Contains No Duplication |
 | CC-130 | Minimal Classes and Methods |
