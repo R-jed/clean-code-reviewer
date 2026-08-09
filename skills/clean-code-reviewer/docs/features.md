@@ -151,9 +151,11 @@ flowchart TD
     J --> K[Trace evidence and apply exemptions]
     K --> L[📚 Consult only relevant references]
     L --> M[Verify mapping and classify findings]
-    M --> N{Verdict criteria}
+    M --> N[🔧 Assess Effort & Benefit where required]
+    N --> O[📋 Generate report]
+    O --> P{Verdict criteria}
 
-    N -->|≥3 Critical or fundamental design problem| O[🚫 Major Rework]
-    N -->|Any Critical or >2 Important| P[⚠️ Needs Fixes]
-    N -->|0 Critical and ≤2 Important| Q[✅ Ready to Merge]
+    P -->|≥3 Critical or fundamental design problem| Q[🚫 Major Rework]
+    P -->|Any Critical or >2 Important| R[⚠️ Needs Fixes]
+    P -->|0 Critical and ≤2 Important| S[✅ Ready to Merge]
 ```
