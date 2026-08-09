@@ -1,6 +1,5 @@
 ---
 name: clean-code-reviewer
-version: 1.4.0
 description: >
   Strict code review following Clean Code, Clean Architecture, and The Pragmatic Programmer
   principles. Use when: (1) reviewing code or pull requests, (2) detecting code smells or
@@ -11,6 +10,9 @@ description: >
   "technical debt", "code smell", "best practices", "clean up code", "refactor review",
   "review this PR", "PR review", "code review", "pre-merge check", "code audit",
   "is this production-ready?", "find bugs", "look at my code", "check for issues".
+license: MIT
+metadata:
+  version: "1.4.0"
 ---
 
 # Clean Code Reviewer
@@ -127,7 +129,7 @@ Zero findings is a valid outcome when no issues meet the threshold.
 Follow this sequence for every review:
 
 1. **Calibrate** — Ask Q1/Q2/Q3 → determine strictness level (or apply L3 fallback)
-2. **Scope** — Confirm what to review: PR diff (changed files + immediate context), module, or specific files. If PR exceeds the level's size limit, flag it as an issue
+2. **Scope** — Confirm what to review: PR diff (changed files + immediate context), module, or specific files. If PR exceeds the level's size limit, treat that as a review-risk signal; report it only when the size creates a concrete reviewability, integration, or correctness risk
 3. **Language check** — Identify paradigm; read [language-adjustments.md](references/language-adjustments.md) if language is NOT Java/C#
 4. **Review** — Walk through the 15-Point Checklist against the code
 5. **Classify** — Assign severity to each finding (see Severity Classification below)
@@ -203,7 +205,7 @@ Before reviewing, identify the language paradigm:
 
 ### 1. Correctness & Functionality
 
-- [ ] **Logic implements requirements correctly?** (PP-75)
+- [ ] **Logic implements requirements correctly?** (CC-152, PP-97)
 - [ ] **Boundary conditions and error handling complete?** (CC-153, PP-36)
 - [ ] **Security vulnerabilities?** (PP-72, PP-73)
 
@@ -221,7 +223,7 @@ Before reviewing, identify the language paradigm:
 
 ### 4. Testing
 
-- [ ] **New code has tests?** (PP-91, CC-194)
+- [ ] **New code has tests?** (PP-89, CC-194)
 - [ ] **Tests readable and independent?** (CC-102, CC-106)
 
 ### 5. Advanced Checks (L3+)
@@ -237,8 +239,8 @@ Before reviewing, identify the language paradigm:
 
 | Smell | Rule | Quick Check |
 |-------|------|-------------|
-| Long function | CC-20 | Exceeds level threshold? (See Metric Thresholds + Measurement Rules) |
-| Too many params | CC-26, CC-147 | Exceeds level threshold? (See Metric Thresholds + Measurement Rules) |
+| Long function | CC-20 | Threshold exceeded and causing a concrete readability or design problem? |
+| Too many params | CC-26, CC-147 | Threshold exceeded and making calls, testing, or change harder? |
 | Magic numbers | CC-175 | Unnamed constants? |
 | Feature envy | CC-164 | Using other class's data? |
 | God class | CC-109, CA-8 | Multiple responsibilities? |
@@ -282,7 +284,7 @@ These should be caught by Linter/Formatter:
 | Level | Criteria | Examples |
 |-------|----------|---------|
 | 🔴 **Critical** | Security vulnerabilities, data loss/corruption risks, logic bugs affecting correctness, crashes on production paths | SQL injection, unvalidated auth, off-by-one on financial calculation |
-| 🟡 **Important** | Design principle violations, metric threshold breaches, maintainability risks, missing tests for critical paths | SRP violation, function with 10 params at L3, no test for core logic |
+| 🟡 **Important** | Design principle violations, concrete maintainability risks, missing tests for critical paths, or metric breaches that demonstrably create one of those problems | SRP violation, unreadable call sites caused by excessive required params, no test for core logic |
 | 🔵 **Minor** | Low-impact code quality observations worth noting but not worth blocking a merge | Magic numbers, commented-out code, minor naming issues, deep nesting that doesn't hurt readability |
 
 **Rules:**
@@ -398,7 +400,7 @@ Express your reasoning as nested bullets under each rating line. Simple issues n
 ## 📋 Code Review Report
 
 **Project Positioning:** L3 Team
-**Review Scope:** src/services/user.ts, src/utils/helpers.ts
+**Review Scope:** src/services/user.ts, src/utils/helpers.ts, src/auth.ts, src/profile.ts, src/account.ts
 
 ### 🔴 Critical Issues (Must Fix)
 - **[user.ts:45] SQL query built with string concatenation**
@@ -413,10 +415,10 @@ Express your reasoning as nested bullets under each rating line. Simple issues n
     - Data loss/breach risk if exploited
 
 ### 🟡 Important Issues (Should Fix)
-- **[helpers.ts:120] Function `processUserData` has 8 parameters**
-  - Evidence: Function signature at line 120 is `processUserData(a, b, c, d, e, f, g, h)` with 8 positional parameters; all 8 are required (no defaults)
+- **[helpers.ts:120] Function `processUserData` has 8 required positional parameters and unreadable call sites**
+  - Evidence: Function signature at line 120 has 8 required positional parameters; callers pass all 8 positionally, so neighboring values cannot be understood without repeatedly reopening the function signature
   - Rule: CC-26 (Function Arguments) + CC-147 (Too Many Arguments)
-  - Principle: Many parameters increase cognitive load and make testing difficult. L3 threshold is ≤5.
+  - Principle: The L3 threshold breach is reportable here because it creates a concrete readability and change-safety problem at call sites
   - Suggestion: Group related parameters into a `UserDataOptions` object
   - Effort: Medium
     - Touches callers across 3 files
@@ -427,13 +429,13 @@ Express your reasoning as nested bullets under each rating line. Simple issues n
 
 ---
 
-- **[user.ts:200] Duplicate validation logic (3rd occurrence)**
-  - Evidence: `validateEmail` and `validatePhone` in `user.ts:200-210` both contain identical regex and null-check patterns already present in `auth.ts:45` and `profile.ts:120`; if the validation rules change, all three copies must be updated
+- **[user.ts:200] Duplicate validation knowledge (4th occurrence)**
+  - Evidence: The same validation rule at `user.ts:200-210` is already encoded in `auth.ts:45`, `profile.ts:120`, and `account.ts:88`; a rule change must update all four copies together
   - Rule: PP-15 (DRY) + CC-37 (Don't Repeat Yourself)
-  - Principle: L3 allows max 3 repetitions. This is the 3rd occurrence -- consider extracting.
-  - Suggestion: Extract to `validateUserInput(input)` function in utils
+  - Principle: L3 allows max 3 repetitions. The 4th occurrence exceeds the L3 tolerance and represents the same knowledge, so it is reportable
+  - Suggestion: Extract the shared validation rule to one authoritative function
   - Effort: Low
-    - Extract to shared function, update 3 call sites in same module
+    - Extract to shared function and update 4 call sites
   - Benefit: Medium
     - Common path -- validation runs on every user mutation
     - Drift risk if logic diverges across copies
@@ -489,4 +491,3 @@ Express your reasoning as nested bullets under each rating line. Simple issues n
 **Component Principles (REP, CCP, CRP, ADP, SDP, SAP):** See [principles-glossary.md](references/principles-glossary.md)
 
 **For DRY vs WET guidance:** See [principles-spectrum.md](references/principles-spectrum.md)
-
