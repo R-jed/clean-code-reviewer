@@ -229,6 +229,8 @@ class RepositoryIntegrityTests(unittest.TestCase):
         self.assertIn("Indexes only", foundation)
         self.assertIn("`SKILL.md` is authoritative", features)
         self.assertIn("Verify mapping and classify findings", features)
+        self.assertIn("Assess Effort & Benefit where required", features)
+        self.assertIn("Generate report", features)
         self.assertNotIn("K{Issues Found?}", features)
 
     def test_readme_threshold_semantics_match_skill(self):
