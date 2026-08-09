@@ -2,6 +2,8 @@
 
 Detailed feature documentation for Clean Code Reviewer.
 
+This file explains behavior for humans. `SKILL.md` is authoritative for workflow, reportability, severity, report format, and verdict rules. See [review-foundations.md](../references/review-foundations.md) for the complete authority model.
+
 ## 🎯 3+4+2 Project Positioning System
 
 A refined questionnaire system that determines the right strictness level:
@@ -111,7 +113,7 @@ Severity is never downgraded by these values — a Critical issue stays Critical
 
 ## 🔖 Rule Citation System
 
-Every issue references its source rule for learning and dispute resolution:
+Every issue references its source rule for traceability and dispute resolution:
 
 | Prefix | Source |
 |--------|--------|
@@ -146,16 +148,12 @@ flowchart TD
     G --> H[L1-L5 Strictness]
     H --> I[🔍 Identify Language]
     I --> J[📝 Run 15-Point Checklist]
-    J --> K{Issues Found?}
+    J --> K[Trace evidence and apply exemptions]
+    K --> L[📚 Consult only relevant references]
+    L --> M[Verify mapping and classify findings]
+    M --> N{Verdict criteria}
 
-    K -->|Yes| L[📚 Consult References]
-    K -->|No| M[✅ Ready to Merge]
-
-    L --> L2[🔧 Assess Effort & Benefit]
-    L2 --> N[📋 Generate Report]
-    N --> O{Verdict}
-
-    O -->|≥3 Critical or fundamental design problem| P[🚫 Major Rework]
-    O -->|Any Critical or >2 Important| Q[⚠️ Needs Fixes]
-    O -->|0 Critical and ≤2 Important| M
+    N -->|≥3 Critical or fundamental design problem| O[🚫 Major Rework]
+    N -->|Any Critical or >2 Important| P[⚠️ Needs Fixes]
+    N -->|0 Critical and ≤2 Important| Q[✅ Ready to Merge]
 ```
