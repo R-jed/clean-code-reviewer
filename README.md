@@ -67,7 +67,7 @@ npx skills add R-jed/clean-code-reviewer -g
 npx skills add R-jed/clean-code-reviewer --agent claude-code
 ```
 
-Claude Code 装到 `.claude/skills/`，Cursor/Codex 装到 `.agents/skills/`。加 `-g` 装到用户级目录。
+skill 统一装到 `.agents/skills/`（universal，适配 20+ 种 agent），Claude Code、Cursor、Codex 等通过符号链接接入（如 `.claude/skills/`）。加 `-g` 装到用户级目录（`~/.agents/skills/`，Claude Code 链接到 `~/.claude/skills/`）。
 
 ## 更新
 
