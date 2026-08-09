@@ -218,6 +218,44 @@ class RepositoryIntegrityTests(unittest.TestCase):
         text = (SKILL_DIR / "references" / "positioning.md").read_text(encoding="utf-8")
         self.assertIn("| Valid terminal combinations | 16 |", text)
 
+    def test_review_authority_model_is_connected(self):
+        skill = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8")
+        foundation = (SKILL_DIR / "references" / "review-foundations.md").read_text(encoding="utf-8")
+        features = (SKILL_DIR / "docs" / "features.md").read_text(encoding="utf-8")
+
+        self.assertIn("[review-foundations.md](references/review-foundations.md)", skill)
+        self.assertIn("`SKILL.md` | Executable review contract", foundation)
+        self.assertIn("`positioning.md` | L1-L5 calibration", foundation)
+        self.assertIn("Indexes only", foundation)
+        self.assertIn("`SKILL.md` is authoritative", features)
+        self.assertIn("Verify mapping and classify findings", features)
+        self.assertIn("Assess Effort & Benefit where required", features)
+        self.assertIn("Generate report", features)
+        self.assertNotIn("K{Issues Found?}", features)
+
+    def test_readme_threshold_semantics_match_skill(self):
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        self.assertIn("只有存在实际影响才会形成 finding", readme)
+        self.assertNotIn("skill 会把它标出来", readme)
+
+    def test_relative_markdown_links_resolve(self):
+        link_pattern = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
+        failures = []
+
+        for markdown_file in ROOT.rglob("*.md"):
+            text = markdown_file.read_text(encoding="utf-8")
+            for target in link_pattern.findall(text):
+                if target.startswith(("http://", "https://", "mailto:", "#")):
+                    continue
+                path_part = target.split("#", 1)[0]
+                if not path_part:
+                    continue
+                resolved = (markdown_file.parent / path_part).resolve()
+                if not resolved.exists():
+                    failures.append(f"{markdown_file.relative_to(ROOT)} -> {target}")
+
+        self.assertEqual(failures, [], "Broken relative links:\n" + "\n".join(failures))
+
 
 if __name__ == "__main__":
     unittest.main()

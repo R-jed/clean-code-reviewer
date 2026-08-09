@@ -21,6 +21,10 @@ Strict code review following Clean Code, Clean Architecture, and The Pragmatic P
 
 **Core principle:** Let machines handle formatting; humans focus on logic and design.
 
+## Review Authority
+
+A reportable finding requires concrete evidence, rule applicability, calibrated context, concrete impact, and a verified rule mapping. Metrics, smell labels, and citations alone are investigation signals. `SKILL.md` owns workflow, reportability, severity, report format, and verdict; delegated concerns and conflict precedence are defined in [review-foundations.md](references/review-foundations.md).
+
 ## Review Scope
 
 Review the quality, correctness, safety, and maintainability of the code implementation.
@@ -455,6 +459,7 @@ Express your reasoning as nested bullets under each rating line. Simple issues n
 
 | Reference File | Load When |
 |----------------|-----------|
+| [review-foundations.md](references/review-foundations.md) | Resolving authority, reportability, or cross-document consistency questions |
 | [language-adjustments.md](references/language-adjustments.md) | Language is NOT Java/C# — always check for non-OOP paradigms |
 | [positioning.md](references/positioning.md) | User wants detailed level explanation or edge-case mapping |
 | [principles-spectrum.md](references/principles-spectrum.md) | Encountering DRY/YAGNI/abstraction-timing edge cases |
@@ -464,7 +469,7 @@ Express your reasoning as nested bullets under each rating line. Simple issues n
 | [pragmatic-programmer.md](references/pragmatic-programmer.md) | Need to cite or explain a **PP-##** rule in detail |
 | [principles-glossary.md](references/principles-glossary.md) | Need full definition of SOLID, LoD, CQS, or component principles |
 
-**Do NOT load all references at once.** Use the rule prefix (PP/CC/CA) to pick the right file.
+**Do NOT load all references at once.** Use the task and rule prefix to load only the relevant material.
 
 ---
 

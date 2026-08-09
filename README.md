@@ -19,10 +19,38 @@
 ## 为什么用它
 
 - **每条结论都能溯源。** 报告里的问题都标注规则编号（CC-## / CA-## / PP-##），对应参考文档里的规则条目。
+- **不会因为命中规则就硬报问题。** Metric、code smell、规则编号都只是调查入口。没有具体代码证据和实际影响，不构成 finding。
 - **严格度可以调。** 3+4+2 问卷把标准从 L1（实验室脚本）校准到 L5（金融、医疗级）。同一个 skill，审玩具项目不小题大做，审核心依赖不放水。
 - **懂语言差异。** 书里规则大多是 Java 场景。skill 按范式调整：Java/C# 全量适用，TypeScript、Python、Kotlin 做适配，Rust、Go 和函数式语言另有一套。
 - **结论有优先级。** 每个 Critical/Important 问题附带 Effort（改起来多费劲）和 Benefit（改了值多少），团队照此排修复顺序。
 - **报告里没有废话。** 不夸优点，不写"整体不错"。只有问题清单加一个最终裁决。
+
+## Review 的根基
+
+```text
+Clean Code                Clean Architecture                The Pragmatic Programmer
+    \                            |                                  /
+     +-------------------- Source rule catalogs ------------------+
+                                |
+                    Principle conflict mediation
+                       DRY / YAGNI / AHA / WET
+                                |
+                    Language/paradigm applicability
+                                |
+                    Project strictness calibration
+                             L1-L5
+                                |
+                    Executable review contract
+                            SKILL.md
+                                |
+                    Evidence-backed findings
+                                |
+                 Severity / Effort / Benefit / Verdict
+```
+
+这套结构有明确的权威边界：`SKILL.md` 管执行工作流、finding 门槛、severity、报告格式和 Verdict；`positioning.md` 管 L1-L5；`language-adjustments.md` 管语言和范式；`principles-spectrum.md` 管原则冲突；三份规则目录分别定义 CC、CA、PP 的规则身份。`quick-lookup.md`、`principles-glossary.md` 和 `docs/` 只负责查询与说明，不重新定义执行规则。
+
+完整模型见 `skills/clean-code-reviewer/references/review-foundations.md`。
 
 ## 对比
 
@@ -50,7 +78,7 @@ Clean Code Reviewer 的输出是：
 
 组合出 L1–L5 五档。跳过校准也行，默认按 L3（团队）审查。
 
-校准之后走 15 点清单：正确性与错误路径、命名与注释、职责与依赖方向、测试，以及 L3 以上的进阶项（并发安全、安全验证、资源释放、算法复杂度）。发现的问题按严重度分级，Critical/Important 附带 Effort/Benefit，最后按裁决标准收尾。
+校准之后走 15 点清单：正确性与错误路径、命名与注释、职责与依赖方向、测试，以及 L3 以上的进阶项（并发安全、安全验证、资源释放、算法复杂度）。Metric threshold、code smell 和规则命中只触发进一步调查；finding 还必须有适用性、具体证据和具体影响。发现的问题按严重度分级，Critical/Important 附带 Effort/Benefit，最后按裁决标准收尾。
 
 ## 安装
 
@@ -87,41 +115,56 @@ npx skills update clean-code-reviewer -g
 - "这段代码能上线吗" / "检查一下有没有 bug"
 - "ready to merge?" / "technical debt"
 
-也可以指定范围：整个仓库、单个文件、或某次提交的 diff。审查对象超过该级别允许的规模时，skill 会把它标出来。
+也可以指定范围：整个仓库、单个文件、或某次提交的 diff。审查对象超过该级别的规模阈值时，skill 会进一步检查它是否造成具体的 reviewability、integration 或 correctness 风险；只有存在实际影响才会形成 finding。
 
 ## 目录结构
 
 ```
 .
+├── .github/
+│   └── workflows/validate.yml           # PR / main 自动验证
 ├── skills/
-│   └── clean-code-reviewer/   # skill 本体
-│       ├── SKILL.md           # 主文件：工作流、清单、报告模板
-│       ├── docs/              # 功能说明、度量阈值、定位系统、规则来源
-│       ├── references/        # 三本书规则库、语言调整、快速查询
-│       └── scripts/           # 校验脚本
+│   └── clean-code-reviewer/              # skill 本体
+│       ├── SKILL.md                      # 权威执行协议
+│       ├── docs/                         # 功能、度量、定位、规则来源说明
+│       ├── references/
+│       │   ├── review-foundations.md     # Review 根基和权威关系
+│       │   ├── clean-code.md
+│       │   ├── clean-architecture.md
+│       │   ├── pragmatic-programmer.md
+│       │   └── ...
+│       └── scripts/
+│           └── validate_skill.py         # Agent Skills frontmatter 校验
+├── tests/
+│   └── test_skill_integrity.py           # Schema、规则库存和跨文档一致性回归测试
 ├── LICENSE
 └── README.md
 ```
 
 ## 开发
 
-校验 skill 结构是否合法：
+本地验证：
 
 ```bash
+python3 -m unittest discover -s tests -v
 python3 skills/clean-code-reviewer/scripts/validate_skill.py skills/clean-code-reviewer
 ```
+
+CI 另外运行 pinned Agent Skills `skills-ref validate`，用于交叉检查本地 validator 和官方参考实现。
 
 ## FAQ
 
 **和 linter 有什么区别？** linter 管格式、命名、未用变量。这个 skill 只看机器看不出来的东西：逻辑正确性、设计决策、架构对齐。
 
-**支持哪些语言？** 按范式调整。Java/C# 全量适用；TypeScript、Python、Kotlin 做适配；Rust、Go 和函数式语言各有调整。详见 `references/language-adjustments.md`。
+**为什么有 350 和 336 两个数字？** 350 是三份来源的规则编号空间，336 是实际进入人工 review 的规则数。CC-64 到 CC-77 共 14 条格式规则交给自动化工具。
+
+**支持哪些语言？** 按范式调整。Java/C# 全量适用；TypeScript、Python、Kotlin 做适配；Rust、Go 和函数式语言各有调整。详见 `skills/clean-code-reviewer/references/language-adjustments.md`。
 
 **审查会不会太严格？** 3+4+2 问卷把标准压到 L1 时，只关心"能不能跑"。同一个 skill，两种用法。
 
 **需要联网吗？** 不需要。安装后所有规则和参考都在本地文件里。
 
-**零问题算通过吗？** 算。没有问题就报告零问题，这是合法结果，不为了凑数硬挑毛病。
+**零问题算通过吗？** 算。没有满足 finding 门槛的问题就报告零问题，不为了凑数硬挑毛病。
 
 ## License
 
