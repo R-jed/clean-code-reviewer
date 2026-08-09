@@ -19,10 +19,14 @@ spec.loader.exec_module(validator)
 def write_skill(parent, directory_name="sample-skill", frontmatter=None):
     skill_dir = Path(parent) / directory_name
     skill_dir.mkdir()
-    data = frontmatter or {
-        "name": directory_name,
-        "description": "A valid test skill used for validator regression tests.",
-    }
+    data = (
+        frontmatter
+        if frontmatter is not None
+        else {
+            "name": directory_name,
+            "description": "A valid test skill used for validator regression tests.",
+        }
+    )
     body = yaml.safe_dump(data, sort_keys=False)
     (skill_dir / "SKILL.md").write_text(f"---\n{body}---\n\n# Test\n", encoding="utf-8")
     return skill_dir
@@ -51,6 +55,19 @@ class ValidatorTests(unittest.TestCase):
             valid, _ = validator.validate_skill(skill)
             self.assertFalse(valid)
 
+    def test_description_length_counts_whitespace(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            skill = write_skill(
+                tmp,
+                frontmatter={
+                    "name": "sample-skill",
+                    "description": "x" * 1024 + " ",
+                },
+            )
+            valid, message = validator.validate_skill(skill)
+            self.assertFalse(valid)
+            self.assertIn("Description is too long", message)
+
     def test_top_level_version_is_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
             skill = write_skill(
@@ -77,6 +94,20 @@ class ValidatorTests(unittest.TestCase):
             )
             valid, message = validator.validate_skill(skill)
             self.assertTrue(valid, message)
+
+    def test_compatibility_length_counts_whitespace(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            skill = write_skill(
+                tmp,
+                frontmatter={
+                    "name": "sample-skill",
+                    "description": "Valid description",
+                    "compatibility": "x" * 500 + " ",
+                },
+            )
+            valid, message = validator.validate_skill(skill)
+            self.assertFalse(valid)
+            self.assertIn("Compatibility is too long", message)
 
     def test_metadata_requires_string_keys_and_values(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -114,6 +145,12 @@ class ValidatorTests(unittest.TestCase):
             valid, message = validator.validate_skill(skill)
             self.assertFalse(valid)
             self.assertIn("must match skill name", message)
+
+    def test_empty_frontmatter_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            skill = write_skill(tmp, frontmatter={})
+            valid, _ = validator.validate_skill(skill)
+            self.assertFalse(valid)
 
 
 class RepositoryIntegrityTests(unittest.TestCase):
