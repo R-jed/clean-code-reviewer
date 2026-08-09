@@ -79,7 +79,6 @@ def validate_skill(skill_path):
     description = frontmatter["description"]
     if not isinstance(description, str) or not description.strip():
         return False, "Description must be a non-empty string"
-    description = description.strip()
     if len(description) > MAX_DESCRIPTION_LENGTH:
         return False, (
             f"Description is too long ({len(description)} characters). "
@@ -95,7 +94,6 @@ def validate_skill(skill_path):
         compatibility = frontmatter["compatibility"]
         if not isinstance(compatibility, str) or not compatibility.strip():
             return False, "Compatibility must be a non-empty string"
-        compatibility = compatibility.strip()
         if len(compatibility) > MAX_COMPATIBILITY_LENGTH:
             return False, (
                 f"Compatibility is too long ({len(compatibility)} characters). "
